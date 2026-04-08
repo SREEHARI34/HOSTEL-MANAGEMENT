@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hostel Management System</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<!-- Correct CSS Link -->
+<link rel="stylesheet" href="HOSTEL.css">
+
+</head>
+
+<body>
+
+<div class="bg"></div>
+
+<div class="center">
+    <div class="container">
+
+        <!-- Warden Login -->
+        <div class="login-card" id="wardenCard">
+            <div class="logo">🏢</div>
+            <h2>Warden Login</h2>
+
+            <input type="text" id="wardenUser" placeholder="Username">
+            <input type="password" id="wardenPass" placeholder="Password">
+
+            <button onclick="wardenLogin()">Sign In</button>
+        </div>
+
+        <!-- Student Login -->
+        <div class="login-card" id="studentCard">
+            <div class="logo">🎓</div>
+            <h2>Student Login</h2>
+
+            <input type="text" id="studentUser" placeholder="Username">
+            <input type="password" id="studentPass" placeholder="Password">
+
+            <p class="hint">Hint: student / student123</p>
+
+            <button onclick="studentLogin()">Sign In</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function wardenLogin() {
+    let u = document.getElementById("wardenUser").value;
+    let p = document.getElementById("wardenPass").value;
+    let card = document.getElementById("wardenCard");
+
+    if(u === "warden" && p === "warden123") {
+        card.classList.add("success");
+        setTimeout(() => {
+            window.location.href = "dashboard.html";
+        }, 1200);
+    } else {
+        card.classList.add("shake");
+        setTimeout(() => card.classList.remove("shake"), 500);
+    }
+}
+
+function studentLogin() {
+    let u = document.getElementById("studentUser").value;
+    let p = document.getElementById("studentPass").value;
+    let card = document.getElementById("studentCard");
+
+    if(u === "student" && p === "student123") {
+        card.classList.add("success");
+        setTimeout(() => {
+            window.location.href = "studentdashboard.html";
+        }, 1200);
+    } else {
+        card.classList.add("shake");
+        setTimeout(() => card.classList.remove("shake"), 500);
+    }
+}
+</script>
+
+</body>
+</html>

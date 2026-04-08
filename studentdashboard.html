@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Dashboard</title>
+
+<link rel="stylesheet" href="studentdashboard.css">
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="bg"></div>
+
+<div class="container">
+
+    <h1 class="title">🎓 Student Dashboard</h1>
+
+    <!-- FORM -->
+    <div class="form-box">
+        <h2>Submit Complaint</h2>
+
+        <input type="text" id="name" placeholder="Name">
+        <input type="text" id="room" placeholder="Room Number">
+        <input type="text" id="attendance" placeholder="Attendance">
+        <input type="text" id="purpose" placeholder="Purpose">
+        <input type="text" id="leave" placeholder="Leave">
+        <input type="text" id="outing" placeholder="Outing">
+
+        <button onclick="addData()">Submit</button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-box">
+        <h2>My Complaints</h2>
+
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Room</th>
+                    <th>Attendance</th>
+                    <th>Purpose</th>
+                    <th>Leave</th>
+                    <th>Outing</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- CHART -->
+    <div class="chart-box">
+        <h2>📊 Complaint Analytics</h2>
+        <canvas id="chart"></canvas>
+    </div>
+
+</div>
+
+<script>
+
+// 🔐 LOGIN USER (simulate)
+let currentUser = localStorage.getItem("loggedUser") || "student";
+
+// ADD DATA
+function addData() {
+
+    let name = document.getElementById("name").value;
+    let room = document.getElementById("room").value;
+    let attendance = document.getElementById("attendance").value;
+    let purpose = document.getElementById("purpose").value;
+    let leave = document.getElementById("leave").value;
+    let outing = document.getElementById("outing").value;
+
+    if(name=="" || room=="") return alert("Fill required");
+
+    let key = "complaints_" + currentUser;
+
+    let data = JSON.parse(localStorage.getItem(key)) || [];
+
+    let obj = {name, room, attendance, purpose, leave, outing};
+
+    data.push(obj);
+
+    localStorage.setItem(key, JSON.stringify(data));
+
+    // 🔥 also store for warden
+    let all = JSON.parse(localStorage.getItem("complaints")) || [];
+    all.push(obj);
+    localStorage.setItem("complaints", JSON.stringify(all));
+
+    loadTable();
+    loadChart();
+}
+
+// LOAD TABLE
+function loadTable() {
+
+    let key = "complaints_" + currentUser;
+    let data = JSON.parse(localStorage.getItem(key)) || [];
+
+    let table = document.querySelector("#dataTable tbody");
+    table.innerHTML = "";
+
+    data.forEach(d => {
+        let row = table.insertRow();
+        row.classList.add("row-animate");
+
+        row.insertCell(0).innerHTML = d.name;
+        row.insertCell(1).innerHTML = d.room;
+        row.insertCell(2).innerHTML = d.attendance;
+        row.insertCell(3).innerHTML = d.purpose;
+        row.insertCell(4).innerHTML = d.leave;
+        row.insertCell(5).innerHTML = d.outing;
+    });
+}
+
+// 📊 CHART
+let chart;
+
+function loadChart() {
+
+    let key = "complaints_" + currentUser;
+    let data = JSON.parse(localStorage.getItem(key)) || [];
+
+    let count = data.length;
+
+    let ctx = document.getElementById("chart");
+
+    if(chart) chart.destroy();
+
+    chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ["Complaints"],
+            datasets: [{
+                label: "Total",
+                data: [count]
+            }]
+        }
+    });
+}
+
+loadTable();
+loadChart();
+
+</script>
+
+</body>
+</html>

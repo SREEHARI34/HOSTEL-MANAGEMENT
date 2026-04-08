@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hostel Dashboard</title>
+<link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>🏢 Hostel</h2>
+
+        <ul>
+            <li onclick="showSection('students', this)">Students</li>
+            <li onclick="showSection('complaints', this)">Complaints</li>
+        </ul>
+
+        <!-- Add Student -->
+        <div class="add-section">
+            <h3>Add Student</h3>
+
+            <input type="text" id="name" placeholder="Name">
+            <input type="text" id="room" placeholder="Room">
+
+            <select id="status">
+                <option>Active</option>
+                <option>Pending</option>
+            </select>
+
+            <button onclick="addStudent()">Add</button>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+
+        <!-- Students -->
+        <div id="studentsSection" class="section">
+            <h2>Students</h2>
+            <ul id="list"></ul>
+        </div>
+
+        <!-- Complaints -->
+        <div id="complaintsSection" class="section" style="display:none;">
+            <h2>Student Complaints</h2>
+
+            <table id="complaintTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Room</th>
+                        <th>Attendance</th>
+                        <th>Purpose</th>
+                        <th>Leave</th>
+                        <th>Outing</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+// Section switch
+function showSection(section, el) {
+
+    document.getElementById("studentsSection").style.display = "none";
+    document.getElementById("complaintsSection").style.display = "none";
+
+    if(section === "students") {
+        document.getElementById("studentsSection").style.display = "block";
+    }
+
+    if(section === "complaints") {
+        document.getElementById("complaintsSection").style.display = "block";
+        loadComplaints();
+    }
+
+    let items = document.querySelectorAll(".sidebar ul li");
+    items.forEach(i => i.classList.remove("active"));
+    el.classList.add("active");
+}
+
+// Add student
+function addStudent() {
+    let name = document.getElementById("name").value;
+    let room = document.getElementById("room").value;
+    let status = document.getElementById("status").value;
+
+    if(name=="" || room=="") return alert("Enter details");
+
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+
+    students.push({name, room, status});
+    localStorage.setItem("students", JSON.stringify(students));
+
+    document.getElementById("name").value="";
+    document.getElementById("room").value="";
+
+    loadStudents();
+}
+
+// Load students
+function loadStudents() {
+    let list = document.getElementById("list");
+    list.innerHTML="";
+
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+
+    students.forEach((s, i) => {
+        let li = document.createElement("li");
+        li.innerHTML = `
+            ${s.name} - Room ${s.room} (${s.status})
+            <button onclick="deleteStudent(${i})">Delete</button>
+        `;
+        list.appendChild(li);
+    });
+}
+
+// Delete student
+function deleteStudent(i) {
+    let students = JSON.parse(localStorage.getItem("students"));
+    students.splice(i,1);
+    localStorage.setItem("students", JSON.stringify(students));
+    loadStudents();
+}
+
+// Load complaints
+function loadComplaints() {
+    let table = document.querySelector("#complaintTable tbody");
+    table.innerHTML = "";
+
+    let complaints = JSON.parse(localStorage.getItem("complaints")) || [];
+
+    complaints.forEach(c => {
+        let row = table.insertRow();
+        row.classList.add("row-animate");
+
+        row.insertCell(0).innerHTML = c.name;
+        row.insertCell(1).innerHTML = c.room;
+        row.insertCell(2).innerHTML = c.attendance;
+        row.insertCell(3).innerHTML = c.purpose;
+        row.insertCell(4).innerHTML = c.leave;
+        row.insertCell(5).innerHTML = c.outing;
+    });
+}
+
+loadStudents();
+
+</script>
+
+</body>
+</html>
